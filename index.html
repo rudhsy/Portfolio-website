@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>再構築中 // Reconstructing...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #000;
+            color: #fafafa;
+            overflow: hidden;
+        }
+
+        /* --- Canvas for Digital Rain --- */
+        #rain-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Behind blobs */
+        }
+
+        /* --- New Globule Animation --- */
+        .blob-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            filter: blur(100px);
+            overflow: hidden;
+        }
+
+        .blob-mover {
+            position: absolute;
+            will-change: transform;
+        }
+        
+        .blob {
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 50%;
+            will-change: transform, opacity;
+        }
+
+        /* Mover animations define the path */
+        .mover-1 { animation: move1 20s infinite alternate; }
+        .mover-2 { animation: move2 22s infinite alternate; animation-delay: -5s; }
+        .mover-3 { animation: move3 18s infinite alternate; animation-delay: -10s; }
+        
+        @keyframes move1 { from { transform: translate(0vw, 10vh) rotate(0deg); } to { transform: translate(70vw, 80vh) rotate(360deg); } }
+        @keyframes move2 { from { transform: translate(80vw, 0vh); } to { transform: translate(10vw, 60vh); } }
+        @keyframes move3 { from { transform: translate(50vw, 90vh); } to { transform: translate(20vw, 10vh); } }
+
+        /* Blob animations define the size and color change */
+        .outer-blob { animation: scale-out 10s infinite; }
+        .inner-blob { animation: scale-in 10s infinite; }
+
+        @keyframes scale-out {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes scale-in {
+            0%, 40% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1.5); opacity: 0.7; }
+        }
+
+        /* --- Central Content Panel --- */
+        .content-panel {
+            background: rgba(10, 10, 10, 0.65); /* Reduced opacity */
+            border: 1px solid rgba(255, 17, 17, 0.3);
+            box-shadow: 0 0 25px rgba(255, 17, 17, 0.2);
+            animation: flicker 5s infinite;
+            position: relative;
+        }
+        
+        .content-panel::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border: 2px solid #ff1111;
+            filter: blur(5px);
+            animation: glitch-border 3s infinite linear;
+            clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%);
+        }
+
+        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.95; } }
+        @keyframes glitch-border { 0% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); } 20% { clip-path: polygon(0 45%, 100% 45%, 100% 48%, 0 48%); } 40% { clip-path: polygon(0 92%, 100% 92%, 100% 95%, 0 95%); } 60% { clip-path: polygon(0 22%, 100% 22%, 100% 25%, 0 25%); } 80% { clip-path: polygon(0 70%, 100% 70%, 100% 73%, 0 73%); } 100% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); } }
+
+        .glitch-text {
+            color: #ff1111;
+            text-shadow: 0 0 5px #ff1111, 0 0 10px #ff1111;
+            animation: text-glitch 3s infinite;
+            position: relative;
+        }
+
+        @keyframes text-glitch { 0% { text-shadow: 0 0 5px #ff1111, 0.05em 0 0 rgba(0,255,255,0.75), -0.05em 0 0 rgba(0,0,255,0.75); } 15% { text-shadow: 0 0 5px #ff1111, 0.05em 0 0 rgba(0,255,255,0.75), -0.05em 0 0 rgba(0,0,255,0.75); } 16% { text-shadow: 0 0 5px #ff1111, -0.05em -0.025em 0 rgba(0,255,255,0.75), 0.025em 0.025em 0 rgba(0,0,255,0.75); } 49% { text-shadow: 0 0 5px #ff1111, -0.05em -0.025em 0 rgba(0,255,255,0.75), 0.025em 0.025em 0 rgba(0,0,255,0.75); } 50% { text-shadow: 0 0 5px #ff1111, 0.025em 0.05em 0 rgba(0,255,255,0.75), 0.05em 0 0 rgba(0,0,255,0.75); } 99% { text-shadow: 0 0 5px #ff1111, 0.025em 0.05em 0 rgba(0,255,255,0.75), 0.05em 0 0 rgba(0,0,255,0.75); } 100% { text-shadow: 0 0 5px #ff1111, -0.025em 0 0 rgba(0,255,255,0.75), -0.025em -0.05em 0 rgba(0,0,255,0.75); } }
+    </style>
+</head>
+<body>
+
+    <canvas id="rain-canvas"></canvas>
+
+    <div class="blob-container">
+        <div class="blob-mover mover-1">
+            <div class="relative" style="width: 400px; height: 400px;">
+                <div class="blob outer-blob" style="width: 100%; height: 100%; background: #e11d48; animation-delay: -2s;"></div>
+                <div class="blob inner-blob" style="width: 100%; height: 100%; background: #4f46e5; animation-delay: -2s;"></div>
+            </div>
+        </div>
+        <div class="blob-mover mover-2">
+            <div class="relative" style="width: 350px; height: 350px;">
+                <div class="blob outer-blob" style="width: 100%; height: 100%; background: #10b981;"></div>
+                <div class="blob inner-blob" style="width: 100%; height: 100%; background: #f59e0b;"></div>
+            </div>
+        </div>
+        <div class="blob-mover mover-3">
+             <div class="relative" style="width: 300px; height: 300px;">
+                <div class="blob outer-blob" style="width: 100%; height: 100%; background: #4f46e5; animation-delay: -4s;"></div>
+                <div class="blob inner-blob" style="width: 100%; height: 100%; background: #00ffff; animation-delay: -4s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="content-panel p-8 sm:p-12 rounded-lg text-center max-w-2xl w-full">
+            <h1 class="text-3xl sm:text-5xl font-bold tracking-widest glitch-text mb-4">
+                RECONSTRUCTION IN PROGRESS
+            </h1>
+            <p class="text-lg text-gray-300 mb-2">
+                The system is being rebuilt. Please stand by.
+            </p>
+            <p class="text-sm text-gray-500 mb-6">// A digital playground by Anirudh //</p>
+            <div class="w-full max-w-md mx-auto">
+                <p class="text-sm text-gray-400">> SARAYU_MODE=SLEEP</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('rain-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) { drops[x] = 1; }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ff1111';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const newColumns = canvas.width / fontSize;
+            drops.length = 0;
+            for (let x = 0; x < newColumns; x++) { drops[x] = 1; }
+        });
+    </script>
+</body>
+</html>
