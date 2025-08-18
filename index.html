@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>再構築中 // Reconstructing...</title>
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Anirudh A</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,6 +99,36 @@
         }
 
         @keyframes text-glitch { 0% { text-shadow: 0 0 5px #ff1111, 0.05em 0 0 rgba(0,255,255,0.75), -0.05em 0 0 rgba(0,0,255,0.75); } 15% { text-shadow: 0 0 5px #ff1111, 0.05em 0 0 rgba(0,255,255,0.75), -0.05em 0 0 rgba(0,0,255,0.75); } 16% { text-shadow: 0 0 5px #ff1111, -0.05em -0.025em 0 rgba(0,255,255,0.75), 0.025em 0.025em 0 rgba(0,0,255,0.75); } 49% { text-shadow: 0 0 5px #ff1111, -0.05em -0.025em 0 rgba(0,255,255,0.75), 0.025em 0.025em 0 rgba(0,0,255,0.75); } 50% { text-shadow: 0 0 5px #ff1111, 0.025em 0.05em 0 rgba(0,255,255,0.75), 0.05em 0 0 rgba(0,0,255,0.75); } 99% { text-shadow: 0 0 5px #ff1111, 0.025em 0.05em 0 rgba(0,255,255,0.75), 0.05em 0 0 rgba(0,0,255,0.75); } 100% { text-shadow: 0 0 5px #ff1111, -0.025em 0 0 rgba(0,255,255,0.75), -0.025em -0.05em 0 rgba(0,0,255,0.75); } }
+        
+        /* --- Lock Screen Styles --- */
+        .password-panel {
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid rgba(255, 17, 17, 0.5);
+            box-shadow: 0 0 35px rgba(255, 17, 17, 0.3);
+        }
+        .password-input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #ff1111;
+            color: #ff1111;
+        }
+        .password-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #ff1111;
+        }
+        .unlock-button {
+            background-color: #ff1111;
+            color: black;
+            text-shadow: 0 0 5px white;
+        }
+        .shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+          10%, 90% { transform: translate3d(-1px, 0, 0); }
+          20%, 80% { transform: translate3d(2px, 0, 0); }
+          30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+          40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
     </style>
 </head>
 <body>
@@ -126,22 +156,39 @@
         </div>
     </div>
 
-    <div class="min-h-screen flex flex-col items-center justify-center p-4">
-        <div class="content-panel p-8 sm:p-12 rounded-lg text-center max-w-2xl w-full">
-            <h1 class="text-3xl sm:text-5xl font-bold tracking-widest glitch-text mb-4">
-                RECONSTRUCTION IN PROGRESS
-            </h1>
-            <p class="text-lg text-gray-300 mb-2">
-                The system is being rebuilt. Please stand by.
-            </p>
-            <p class="text-sm text-gray-500 mb-6">// A digital playground by Anirudh //</p>
-            <div class="w-full max-w-md mx-auto">
-                <p class="text-sm text-gray-400">> SARAYU_MODE=SLEEP</p>
+    <!-- Main Content - Hidden by default -->
+    <main id="main-content" style="visibility: hidden;">
+        <div class="min-h-screen flex flex-col items-center justify-center p-4">
+            <div class="content-panel p-8 sm:p-12 rounded-lg text-center max-w-2xl w-full">
+                <h1 class="text-3xl sm:text-5xl font-bold tracking-widest glitch-text mb-4">
+                    RECONSTRUCTION IN PROGRESS
+                </h1>
+                <p class="text-lg text-gray-300 mb-2">
+                    The system is being rebuilt. Please stand by.
+                </p>
+                <p class="text-sm text-gray-500 mb-6">// A digital playground by Anirudh //</p>
+                <div class="w-full max-w-md mx-auto">
+                    <p class="text-sm text-gray-400">> SARAYU_MODE=SLEEP</p>
+                </div>
             </div>
+        </div>
+    </main>
+
+    <!-- Lock Screen -->
+    <div id="lock-screen" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-500">
+        <div class="password-panel p-8 rounded-lg text-center w-full max-w-sm">
+            <div class="flex justify-center space-x-4 mb-6">
+                <img src="https://source.unsplash.com/random/150x150/?cyberpunk,woman,portrait" alt="Cyberpunk Woman" class="rounded-full w-24 h-24 border-2 border-red-500 shadow-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ff1111/000000?text=ERR';">
+                <img src="https://source.unsplash.com/random/150x151/?cyberpunk,woman,portrait" alt="Cyberpunk Woman" class="rounded-full w-24 h-24 border-2 border-red-500 shadow-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ff1111/000000?text=ERR';">
+            </div>
+            <h2 class="text-xl text-red-400 mb-4 tracking-widest">SYSTEM LOCKED</h2>
+            <input type="password" id="password-input" class="password-input w-full p-2 rounded text-center mb-4" placeholder="ACCESS KEY">
+            <button id="unlock-button" class="unlock-button w-full p-2 rounded font-bold tracking-widest">AUTHORIZE</button>
         </div>
     </div>
 
     <script>
+        // --- Digital Rain ---
         const canvas = document.getElementById('rain-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -173,6 +220,41 @@
             const newColumns = canvas.width / fontSize;
             drops.length = 0;
             for (let x = 0; x < newColumns; x++) { drops[x] = 1; }
+        });
+
+        // --- Password Lock ---
+        const lockScreen = document.getElementById('lock-screen');
+        const passwordInput = document.getElementById('password-input');
+        const unlockButton = document.getElementById('unlock-button');
+        const mainContent = document.getElementById('main-content');
+        
+        const correctPassword = 'sarayugay';
+
+        function checkPassword() {
+            if (passwordInput.value === correctPassword) {
+                // Correct password
+                lockScreen.style.opacity = '0';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                }, 500); // Match duration of opacity transition
+                mainContent.style.visibility = 'visible';
+            } else {
+                // Incorrect password
+                passwordInput.classList.add('shake');
+                passwordInput.value = ''; // Clear input
+                setTimeout(() => {
+                    passwordInput.classList.remove('shake');
+                }, 820); // Match duration of shake animation
+            }
+        }
+
+        unlockButton.addEventListener('click', checkPassword);
+        
+        // Allow pressing Enter to submit
+        passwordInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
         });
     </script>
 </body>
