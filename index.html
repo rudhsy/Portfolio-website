@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
-    <title>Anirudh A</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>再構築中 // Reconstructing...</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,9 +102,23 @@
         
         /* --- Lock Screen Styles --- */
         .password-panel {
-            background: rgba(10, 10, 10, 0.85);
+            background-image: url('e9a76a8c9867bd0b5ad0328154416d02.jpg');
+            background-size: cover;
+            background-position: center;
             border: 1px solid rgba(255, 17, 17, 0.5);
             box-shadow: 0 0 35px rgba(255, 17, 17, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .password-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 50%, transparent);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            /* Create a mask to make the blur stronger at the bottom */
+            mask-image: linear-gradient(to top, black 0%, black 40%, transparent 70%);
+            -webkit-mask-image: linear-gradient(to top, black 0%, black 40%, transparent 70%);
         }
         .password-input {
             background: rgba(0,0,0,0.5);
@@ -176,14 +190,13 @@
 
     <!-- Lock Screen -->
     <div id="lock-screen" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-500">
-        <div class="password-panel p-8 rounded-lg text-center w-full max-w-sm">
-            <div class="flex justify-center space-x-4 mb-6">
-                <img src="https://source.unsplash.com/random/150x150/?cyberpunk,woman,portrait" alt="Cyberpunk Woman" class="rounded-full w-24 h-24 border-2 border-red-500 shadow-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ff1111/000000?text=ERR';">
-                <img src="https://source.unsplash.com/random/150x151/?cyberpunk,woman,portrait" alt="Cyberpunk Woman" class="rounded-full w-24 h-24 border-2 border-red-500 shadow-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/150x150/ff1111/000000?text=ERR';">
+        <div class="password-panel rounded-lg text-center w-full max-w-sm h-[500px]">
+            <div class="password-overlay"></div>
+            <div class="relative z-10 p-8 flex flex-col justify-end h-full">
+                <h2 class="text-xl text-red-400 mb-4 tracking-widest">SYSTEM LOCKED</h2>
+                <input type="password" id="password-input" class="password-input w-full p-2 rounded text-center mb-4" placeholder="ACCESS KEY">
+                <button id="unlock-button" class="unlock-button w-full p-2 rounded font-bold tracking-widest">AUTHORIZE</button>
             </div>
-            <h2 class="text-xl text-red-400 mb-4 tracking-widest">SYSTEM LOCKED</h2>
-            <input type="password" id="password-input" class="password-input w-full p-2 rounded text-center mb-4" placeholder="ACCESS KEY">
-            <button id="unlock-button" class="unlock-button w-full p-2 rounded font-bold tracking-widest">AUTHORIZE</button>
         </div>
     </div>
 
