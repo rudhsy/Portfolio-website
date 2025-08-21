@@ -237,7 +237,7 @@
         @media (min-width: 640px) { .hero h1 { font-size: 3.75rem; } .hero p { font-size: 1.25rem; } }
         @media (min-width: 1024px) { .hero h1 { font-size: 4.5rem; } }
 
-        /* --- Projects Section --- */
+        /* --- Projects Section (Google AI Experiments Style) --- */
         .projects {
             padding-top: 6rem;
             padding-bottom: 6rem;
@@ -260,16 +260,16 @@
         }
         .project-card .card-content {
             background-color: var(--card-bg);
-            border-radius: 0.5rem;
+            border-radius: 0.75rem; /* Slightly more rounded */
             overflow: hidden;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
+            border: 1px solid transparent; /* No border by default */
+            transition: all 0.3s ease-out;
             transform: translateY(0);
         }
         .project-card:hover .card-content {
             border-color: var(--accent-color);
-            transform: translateY(-0.25rem);
-            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2), 0 0 20px rgba(99, 102, 241, 0.15);
         }
         .project-card img {
             width: 100%;
@@ -488,7 +488,7 @@
             function draw() {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#333'; // Darker Grey color for the rain
+                ctx.fillStyle = '#888'; // Brighter Grey color for the rain
                 ctx.font = fontSize + 'px monospace';
                 for (let i = 0; i < drops.length; i++) {
                     const text = characters.charAt(Math.floor(Math.random() * characters.length));
