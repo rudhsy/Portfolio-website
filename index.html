@@ -3,17 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>再構築中 // Reconstructing...</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Anirudh A</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- CSS Variables --- */
+        :root {
+            --accent-color: #6366F1;
+            --font-main: 'Space Grotesk', sans-serif;
+            --bg-color: #000;
+            --text-primary: #EAEAEA;
+            --text-secondary: #A0A0A0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Base & Reset Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
         body {
-            font-family: 'Share Tech Mono', monospace;
-            background-color: #000;
-            color: #fafafa;
-            overflow: hidden;
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* --- Animated Cursor --- */
+        .animated-cursor {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            position: fixed;
+            top: -4px;
+            left: -4px;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease-out, width 0.3s ease, height 0.3s ease;
+        }
+        .animated-cursor.hover {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: -20px;
         }
 
         /* --- Canvas for Digital Rain --- */
@@ -23,116 +64,82 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -2; /* Behind blobs */
+            z-index: -1;
+            filter: blur(2px); /* Added blur to the background canvas */
         }
 
-        /* --- New Globule Animation --- */
-        .blob-container {
+        /* --- Lock Screen Styles --- */
+        .lock-screen {
             position: fixed;
             inset: 0;
-            z-index: -1;
-            filter: blur(100px);
-            overflow: hidden;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
         }
-
-        .blob-mover {
-            position: absolute;
-            will-change: transform;
-        }
-        
-        .blob {
-            position: absolute;
-            top: 0; left: 0;
-            border-radius: 50%;
-            will-change: transform, opacity;
-        }
-
-        /* Mover animations define the path */
-        .mover-1 { animation: move1 20s infinite alternate; }
-        .mover-2 { animation: move2 22s infinite alternate; animation-delay: -5s; }
-        .mover-3 { animation: move3 18s infinite alternate; animation-delay: -10s; }
-        
-        @keyframes move1 { from { transform: translate(0vw, 10vh) rotate(0deg); } to { transform: translate(70vw, 80vh) rotate(360deg); } }
-        @keyframes move2 { from { transform: translate(80vw, 0vh); } to { transform: translate(10vw, 60vh); } }
-        @keyframes move3 { from { transform: translate(50vw, 90vh); } to { transform: translate(20vw, 10vh); } }
-
-        /* Blob animations define the size and color change */
-        .outer-blob { animation: scale-out 10s infinite; }
-        .inner-blob { animation: scale-in 10s infinite; }
-
-        @keyframes scale-out {
-            0%, 100% { transform: scale(1); opacity: 0.7; }
-            50% { transform: scale(1.8); opacity: 0; }
-        }
-        @keyframes scale-in {
-            0%, 40% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1.5); opacity: 0.7; }
-        }
-
-        /* --- Central Content Panel --- */
-        .content-panel {
-            background: rgba(10, 10, 10, 0.65); /* Reduced opacity */
-            border: 1px solid rgba(255, 17, 17, 0.3);
-            box-shadow: 0 0 25px rgba(255, 17, 17, 0.2);
-            animation: flicker 5s infinite;
-            position: relative;
-        }
-        
-        .content-panel::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            border: 2px solid #ff1111;
-            filter: blur(5px);
-            animation: glitch-border 3s infinite linear;
-            clip-path: polygon(0 0, 100% 0, 100% 2%, 0 2%);
-        }
-
-        @keyframes flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.95; } }
-        @keyframes glitch-border { 0% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); } 20% { clip-path: polygon(0 45%, 100% 45%, 100% 48%, 0 48%); } 40% { clip-path: polygon(0 92%, 100% 92%, 100% 95%, 0 95%); } 60% { clip-path: polygon(0 22%, 100% 22%, 100% 25%, 0 25%); } 80% { clip-path: polygon(0 70%, 100% 70%, 100% 73%, 0 73%); } 100% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); } }
-
-        .glitch-text {
-            color: #ff1111;
-            text-shadow: 0 0 5px #ff1111, 0 0 10px #ff1111;
-            animation: text-glitch 3s infinite;
-            position: relative;
-        }
-
-        @keyframes text-glitch { 0% { text-shadow: 0 0 5px #ff1111, 0.05em 0 0 rgba(0,255,255,0.75), -0.05em 0 0 rgba(0,0,255,0.75); } 15% { text-shadow: 0 0 5px #ff1111, 0.05em 0 0 rgba(0,255,255,0.75), -0.05em 0 0 rgba(0,0,255,0.75); } 16% { text-shadow: 0 0 5px #ff1111, -0.05em -0.025em 0 rgba(0,255,255,0.75), 0.025em 0.025em 0 rgba(0,0,255,0.75); } 49% { text-shadow: 0 0 5px #ff1111, -0.05em -0.025em 0 rgba(0,255,255,0.75), 0.025em 0.025em 0 rgba(0,0,255,0.75); } 50% { text-shadow: 0 0 5px #ff1111, 0.025em 0.05em 0 rgba(0,255,255,0.75), 0.05em 0 0 rgba(0,0,255,0.75); } 99% { text-shadow: 0 0 5px #ff1111, 0.025em 0.05em 0 rgba(0,255,255,0.75), 0.05em 0 0 rgba(0,0,255,0.75); } 100% { text-shadow: 0 0 5px #ff1111, -0.025em 0 0 rgba(0,255,255,0.75), -0.025em -0.05em 0 rgba(0,0,255,0.75); } }
-        
-        /* --- Lock Screen Styles --- */
         .password-panel {
-            background-image: url('e9a76a8c9867bd0b5ad0328154416d02.jpg');
+            background-image: url('https://source.unsplash.com/random/400x600/?cyberpunk,woman,portrait,neon');
             background-size: cover;
             background-position: center;
-            border: 1px solid rgba(255, 17, 17, 0.5);
-            box-shadow: 0 0 35px rgba(255, 17, 17, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            width: 100%;
+            max-width: 24rem; /* max-w-sm */
+            height: 500px;
+            border-radius: 0.5rem; /* rounded-lg */
+            text-align: center;
         }
         .password-overlay {
             position: absolute;
             inset: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 50%, transparent);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            /* Create a mask to make the blur stronger at the bottom */
-            mask-image: linear-gradient(to top, black 0%, black 40%, transparent 70%);
-            -webkit-mask-image: linear-gradient(to top, black 0%, black 40%, transparent 70%);
+        }
+        .password-content {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        .password-title {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
         }
         .password-input {
             background: rgba(0,0,0,0.5);
-            border: 1px solid #ff1111;
-            color: #ff1111;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            text-align: center;
+            margin-bottom: 1rem;
         }
         .password-input:focus {
             outline: none;
-            box-shadow: 0 0 10px #ff1111;
+            box-shadow: 0 0 10px var(--accent-color);
+            border-color: var(--accent-color);
         }
         .unlock-button {
-            background-color: #ff1111;
-            color: black;
-            text-shadow: 0 0 5px white;
+            background-color: var(--accent-color);
+            color: white;
+            font-family: var(--font-main);
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            border: none;
         }
         .shake {
             animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
@@ -143,131 +150,411 @@
           30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
           40%, 60% { transform: translate3d(4px, 0, 0); }
         }
+
+        /* --- Portfolio Layout --- */
+        .container {
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
+        @media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; } }
+
+        /* --- Header --- */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 6rem;
+        }
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+        }
+        .header nav {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .header nav {
+                display: flex;
+                gap: 3rem;
+            }
+        }
+        .nav-link {
+            position: relative;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-link:hover { color: white; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent-color);
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 7rem;
+            padding-bottom: 7rem;
+        }
+        .hero h1 {
+            font-weight: 700;
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .hero p {
+            max-width: 56rem;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+        @media (min-width: 640px) { .hero h1 { font-size: 3.75rem; } .hero p { font-size: 1.25rem; } }
+        @media (min-width: 1024px) { .hero h1 { font-size: 4.5rem; } }
+
+        /* --- Projects Section --- */
+        .projects {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+        }
+        .project-grid {
+            display: grid;
+            gap: 2.5rem;
+        }
+        @media (min-width: 768px) {
+            .project-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .project-card {
+            display: block;
+            text-decoration: none;
+        }
+        .project-card .card-content {
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            transform: translateY(0);
+        }
+        .project-card:hover .card-content {
+            border-color: var(--accent-color);
+            transform: translateY(-0.25rem);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1);
+        }
+        .project-card img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .project-card .card-info { padding: 1.5rem; }
+        .project-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+        .project-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .project-card .tag {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        /* --- About Section --- */
+        .about {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+        .about-grid {
+            display: grid;
+            gap: 4rem;
+            align-items: center;
+        }
+        @media (min-width: 768px) { .about-grid { grid-template-columns: repeat(5, 1fr); } }
+        .about-image {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) { .about-image { grid-column: span 2 / span 2; } }
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @media (min-width: 768px) { .about-content { grid-column: span 3 / span 3; } }
+        .about-content h2 { margin-bottom: 2rem; }
+        .about-content p {
+            max-width: 42rem;
+            font-size: 1.125rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        .about-content p strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .footer h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        @media (min-width: 640px) { .footer h2 { font-size: 3rem; } }
+        .footer .email-link {
+            display: inline-block;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-bottom: 3rem;
+        }
+        .footer .email-link:hover { text-decoration: underline; }
+        .footer .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .footer .social-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .footer .social-links a:hover { color: white; }
     </style>
 </head>
 <body>
-
+    <div class="animated-cursor"></div>
     <canvas id="rain-canvas"></canvas>
-
-    <div class="blob-container">
-        <div class="blob-mover mover-1">
-            <div class="relative" style="width: 400px; height: 400px;">
-                <div class="blob outer-blob" style="width: 100%; height: 100%; background: #e11d48; animation-delay: -2s;"></div>
-                <div class="blob inner-blob" style="width: 100%; height: 100%; background: #4f46e5; animation-delay: -2s;"></div>
-            </div>
-        </div>
-        <div class="blob-mover mover-2">
-            <div class="relative" style="width: 350px; height: 350px;">
-                <div class="blob outer-blob" style="width: 100%; height: 100%; background: #10b981;"></div>
-                <div class="blob inner-blob" style="width: 100%; height: 100%; background: #f59e0b;"></div>
-            </div>
-        </div>
-        <div class="blob-mover mover-3">
-             <div class="relative" style="width: 300px; height: 300px;">
-                <div class="blob outer-blob" style="width: 100%; height: 100%; background: #4f46e5; animation-delay: -4s;"></div>
-                <div class="blob inner-blob" style="width: 100%; height: 100%; background: #00ffff; animation-delay: -4s;"></div>
-            </div>
-        </div>
-    </div>
-
+    
     <!-- Main Content - Hidden by default -->
-    <main id="main-content" style="visibility: hidden;">
-        <div class="min-h-screen flex flex-col items-center justify-center p-4">
-            <div class="content-panel p-8 sm:p-12 rounded-lg text-center max-w-2xl w-full">
-                <h1 class="text-3xl sm:text-5xl font-bold tracking-widest glitch-text mb-4">
-                    RECONSTRUCTION IN PROGRESS
-                </h1>
-                <p class="text-lg text-gray-300 mb-2">
-                    The system is being rebuilt. Please stand by.
-                </p>
-                <p class="text-sm text-gray-500 mb-6">// A digital playground by Anirudh //</p>
-                <div class="w-full max-w-md mx-auto">
-                    <p class="text-sm text-gray-400">> SARAYU_MODE=SLEEP</p>
+    <div id="main-content" style="visibility: hidden;">
+        <header class="header">
+            <div class="container">
+                <div class="logo">Anirudh A</div>
+                <nav>
+                    <a href="#projects" class="nav-link">Projects</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="hero">
+                <h1>Designing intuitive and meaningful digital experiences.</h1>
+                <p>I'm an Interaction Designer passionate about bridging the gap between people and technology through thoughtful user research, prototyping, and design.</p>
+            </section>
+
+            <section id="projects" class="projects">
+                <h2 class="section-title">Featured Work</h2>
+                <div class="project-grid">
+                    <a href="https://www.behance.net/rudhsy" target="_blank" rel="noopener noreferrer" class="project-card">
+                        <div class="card-content">
+                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+One&font=roboto" alt="Mobile Banking App Redesign">
+                            <div class="card-info">
+                                <h3>Mobile Banking App Redesign</h3>
+                                <div class="tags">
+                                    <span class="tag">Figma</span>
+                                    <span class="tag">User Research</span>
+                                    <span class="tag">Prototyping</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#" class="project-card">
+                        <div class="card-content">
+                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+Two&font=roboto" alt="E-commerce User Journey">
+                            <div class="card-info">
+                                <h3>E-commerce User Journey</h3>
+                                <div class="tags">
+                                    <span class="tag">Adobe XD</span>
+                                    <span class="tag">Journey Mapping</span>
+                                    <span class="tag">A/B Testing</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#" class="project-card">
+                        <div class="card-content">
+                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+Three&font=roboto" alt="Design System for a SaaS Platform">
+                            <div class="card-info">
+                                <h3>Design System for a SaaS Platform</h3>
+                                <div class="tags">
+                                    <span class="tag">Component Design</span>
+                                    <span class="tag">Style Guides</span>
+                                    <span class="tag">Collaboration</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section id="about" class="about">
+                <div class="about-grid">
+                    <div class="about-image">
+                        <img src="https://placehold.co/500x600/111111/EAEAEA?text=Anirudh+A" alt="Anirudh A">
+                    </div>
+                    <div class="about-content">
+                        <h2 class="section-title">About Me</h2>
+                        <p>I believe that the best designs are born from a deep <strong>understanding of human behavior and needs.</strong> My process is rooted in empathy, iterative prototyping, and a relentless pursuit of clarity. I aim to create products that are not only functional and beautiful, but also <strong>respectful of a user's time and attention.</strong></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer id="contact" class="footer">
+            <div class="container">
+                <h2>Let's create something great.</h2>
+                <a href="mailto:anirudhidc@gmail.com" class="email-link">anirudhidc@gmail.com</a>
+                <div class="social-links">
+                    <a href="https://www.behance.net/rudhsy" target="_blank" rel="noopener noreferrer">Behance</a>
+                    <a href="https://www.linkedin.com/in/rudhsy/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://www.instagram.com/rudhsy/" target="_blank" rel="noopener noreferrer">Instagram</a>
                 </div>
             </div>
-        </div>
-    </main>
+        </footer>
+    </div>
 
     <!-- Lock Screen -->
-    <div id="lock-screen" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity duration-500">
-        <div class="password-panel rounded-lg text-center w-full max-w-sm h-[500px]">
+    <div id="lock-screen" class="lock-screen">
+        <div class="password-panel">
             <div class="password-overlay"></div>
-            <div class="relative z-10 p-8 flex flex-col justify-end h-full">
-                <h2 class="text-xl text-red-400 mb-4 tracking-widest">SYSTEM LOCKED</h2>
-                <input type="password" id="password-input" class="password-input w-full p-2 rounded text-center mb-4" placeholder="ACCESS KEY">
-                <button id="unlock-button" class="unlock-button w-full p-2 rounded font-bold tracking-widest">AUTHORIZE</button>
+            <div class="password-content">
+                <h2 class="password-title">SYSTEM LOCKED</h2>
+                <input type="password" id="password-input" class="password-input" placeholder="ACCESS KEY">
+                <button id="unlock-button" class="unlock-button">AUTHORIZE</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Digital Rain ---
-        const canvas = document.getElementById('rain-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        for (let x = 0; x < columns; x++) { drops[x] = 1; }
-
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ff1111';
-            ctx.font = fontSize + 'px monospace';
-            for (let i = 0; i < drops.length; i++) {
-                const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        setInterval(draw, 33);
-        window.addEventListener('resize', () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Digital Rain ---
+            const canvas = document.getElementById('rain-canvas');
+            const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            const newColumns = canvas.width / fontSize;
-            drops.length = 0;
-            for (let x = 0; x < newColumns; x++) { drops[x] = 1; }
-        });
+            const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン01';
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            for (let x = 0; x < columns; x++) { drops[x] = 1; }
 
-        // --- Password Lock ---
-        const lockScreen = document.getElementById('lock-screen');
-        const passwordInput = document.getElementById('password-input');
-        const unlockButton = document.getElementById('unlock-button');
-        const mainContent = document.getElementById('main-content');
-        
-        const correctPassword = 'sarayugay';
-
-        function checkPassword() {
-            if (passwordInput.value === correctPassword) {
-                // Correct password
-                lockScreen.style.opacity = '0';
-                setTimeout(() => {
-                    lockScreen.style.display = 'none';
-                }, 500); // Match duration of opacity transition
-                mainContent.style.visibility = 'visible';
-            } else {
-                // Incorrect password
-                passwordInput.classList.add('shake');
-                passwordInput.value = ''; // Clear input
-                setTimeout(() => {
-                    passwordInput.classList.remove('shake');
-                }, 820); // Match duration of shake animation
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#333'; // Darker Grey color for the rain
+                ctx.font = fontSize + 'px monospace';
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
             }
-        }
+            setInterval(draw, 40);
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                const newColumns = canvas.width / fontSize;
+                drops.length = 0;
+                for (let x = 0; x < newColumns; x++) { drops[x] = 1; }
+            });
 
-        unlockButton.addEventListener('click', checkPassword);
-        
-        // Allow pressing Enter to submit
-        passwordInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                checkPassword();
+            // --- Animated Cursor ---
+            const cursor = document.querySelector('.animated-cursor');
+            if (cursor) {
+                const hoverElements = document.querySelectorAll('a, button, h1, h2, h3, p, span');
+                const onMouseMove = (e) => {
+                    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+                };
+                const onMouseOver = () => cursor.classList.add('hover');
+                const onMouseOut = () => cursor.classList.remove('hover');
+                document.addEventListener('mousemove', onMouseMove);
+                hoverElements.forEach(el => {
+                    el.addEventListener('mouseover', onMouseOver);
+                    el.addEventListener('mouseout', onMouseOut);
+                });
             }
+
+            // --- Password Lock ---
+            const lockScreen = document.getElementById('lock-screen');
+            const passwordInput = document.getElementById('password-input');
+            const unlockButton = document.getElementById('unlock-button');
+            const mainContent = document.getElementById('main-content');
+            
+            const correctPassword = 'sarayugay';
+
+            function checkPassword() {
+                if (passwordInput.value === correctPassword) {
+                    lockScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        lockScreen.style.display = 'none';
+                    }, 500);
+                    mainContent.style.visibility = 'visible';
+                } else {
+                    passwordInput.classList.add('shake');
+                    passwordInput.value = '';
+                    setTimeout(() => {
+                        passwordInput.classList.remove('shake');
+                    }, 820);
+                }
+            }
+
+            unlockButton.addEventListener('click', checkPassword);
+            
+            passwordInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    checkPassword();
+                }
+            });
         });
     </script>
 </body>
