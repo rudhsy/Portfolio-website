@@ -1,1 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anirudh A</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables --- */
+        :root {
+            --accent-color: #6366F1;
+            --font-main: 'Space Grotesk', sans-serif;
+            --bg-color: #000;
+            --text-primary: #EAEAEA;
+            --text-secondary: #A0A0A0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
 
+        /* --- Base & Reset Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* --- Animated Cursor --- */
+        .animated-cursor {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            position: fixed;
+            top: -4px;
+            left: -4px;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease-out, width 0.3s ease, height 0.3s ease;
+        }
+        .animated-cursor.hover {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: -20px;
+        }
+
+        /* --- Canvas for Digital Rain --- */
+        #rain-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(2px); /* Added blur to the background canvas */
+        }
+
+        /* --- Lock Screen Styles --- */
+        .lock-screen {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .password-panel {
+            background-image: url('lockpic.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 24rem; /* max-w-sm */
+            height: 500px;
+            border-radius: 0.5rem; /* rounded-lg */
+            text-align: center;
+        }
+        .password-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 50%, transparent);
+        }
+        .password-content {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        .password-title {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+        .password-input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--text-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .password-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        .unlock-button {
+            background-color: var(--accent-color);
+            color: white;
+            font-family: var(--font-main);
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            border: none;
+        }
+        .shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+          10%, 90% { transform: translate3d(-1px, 0, 0); }
+          20%, 80% { transform: translate3d(2px, 0, 0); }
+          30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+          40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* --- Portfolio Layout --- */
+        .container {
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
+        @media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; } }
+
+        /* --- Header --- */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 6rem;
+        }
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
+        }
+        .header nav {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .header nav {
+                display: flex;
+                gap: 3rem;
+            }
+        }
+        .nav-link {
+            position: relative;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-link:hover { color: white; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent-color);
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 7rem;
+            padding-bottom: 7rem;
+        }
+        .hero h1 {
+            font-weight: 700;
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .hero p {
+            max-width: 56rem;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+        @media (min-width: 640px) { .hero h1 { font-size: 3.75rem; } .hero p { font-size: 1.25rem; } }
+        @media (min-width: 1024px) { .hero h1 { font-size: 4.5rem; } }
+
+        /* --- Projects Section (Google AI Experiments Style) --- */
+        .projects {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+        }
+        .project-grid {
+            display: grid;
+            gap: 2.5rem;
+        }
+        @media (min-width: 768px) {
+            .project-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .project-card {
+            display: block;
+            text-decoration: none;
+        }
+        .project-card .card-content {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem; /* Slightly more rounded */
+            overflow: hidden;
+            border: 1px solid transparent; /* No border by default */
+            transition: all 0.3s ease-out;
+            transform: translateY(0);
+        }
+        .project-card:hover .card-content {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2), 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .project-card img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .project-card .card-info { padding: 1.5rem; }
+        .project-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+        .project-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .project-card .tag {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        /* --- About Section --- */
+        .about {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+        .about-grid {
+            display: grid;
+            gap: 4rem;
+            align-items: center;
+        }
+        @media (min-width: 768px) { .about-grid { grid-template-columns: repeat(5, 1fr); } }
+        .about-image {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) { .about-image { grid-column: span 2 / span 2; } }
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @media (min-width: 768px) { .about-content { grid-column: span 3 / span 3; } }
+        .about-content h2 { margin-bottom: 2rem; }
+        .about-content p {
+            max-width: 42rem;
+            font-size: 1.125rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        .about-content p strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .footer h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        @media (min-width: 640px) { .footer h2 { font-size: 3rem; } }
+        .footer .email-link {
+            display: inline-block;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-bottom: 3rem;
+        }
+        .footer .email-link:hover { text-decoration: underline; }
+        .footer .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .footer .social-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .footer .social-links a:hover { color: white; }
+    </style>
+</head>
+<body>
+    <div class="animated-cursor"></div>
+    <canvas id="rain-canvas"></canvas>
+    
+    <!-- Main Content - Hidden by default -->
+    <div id="main-content" style="visibility: hidden;">
+        <header class="header">
+            <div class="container">
+                <div class="logo">Anirudh A</div>
+                <nav>
+                    <a href="#projects" class="nav-link">Projects</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="hero">
+                <h1>Designing intuitive and meaningful digital experiences.</h1>
+                <p>I'm an Interaction Designer passionate about bridging the gap between people and technology through thoughtful user research, prototyping, and design.</p>
+            </section>
+
+            <section id="projects" class="projects">
+                <h2 class="section-title">Featured Work</h2>
+                <div class="project-grid">
+                    <a href="https://www.behance.net/rudhsy" target="_blank" rel="noopener noreferrer" class="project-card">
+                        <div class="card-content">
+                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+One&font=roboto" alt="Mobile Banking App Redesign">
+                            <div class="card-info">
+                                <h3>Mobile Banking App Redesign</h3>
+                                <div class="tags">
+                                    <span class="tag">Figma</span>
+                                    <span class="tag">User Research</span>
+                                    <span class="tag">Prototyping</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#" class="project-card">
+                        <div class="card-content">
+                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+Two&font=roboto" alt="E-commerce User Journey">
+                            <div class="card-info">
+                                <h3>E-commerce User Journey</h3>
+                                <div class="tags">
+                                    <span class="tag">Adobe XD</span>
+                                    <span class="tag">Journey Mapping</span>
+                                    <span class="tag">A/B Testing</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="#" class="project-card">
+                        <div class="card-content">
+                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+Three&font=roboto" alt="Design System for a SaaS Platform">
+                            <div class="card-info">
+                                <h3>Design System for a SaaS Platform</h3>
+                                <div class="tags">
+                                    <span class="tag">Component Design</span>
+                                    <span class="tag">Style Guides</span>
+                                    <span class="tag">Collaboration</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section id="about" class="about">
+                <div class="about-grid">
+                    <div class="about-image">
+                        <img src="https://placehold.co/500x600/111111/EAEAEA?text=Anirudh+A" alt="Anirudh A">
+                    </div>
+                    <div class="about-content">
+                        <h2 class="section-title">About Me</h2>
+                        <p>I believe that the best designs are born from a deep <strong>understanding of human behavior and needs.</strong> My process is rooted in empathy, iterative prototyping, and a relentless pursuit of clarity. I aim to create products that are not only functional and beautiful, but also <strong>respectful of a user's time and attention.</strong></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer id="contact" class="footer">
+            <div class="container">
+                <h2>Let's create something great.</h2>
+                <a href="mailto:anirudhidc@gmail.com" class="email-link">anirudhidc@gmail.com</a>
+                <div class="social-links">
+                    <a href="https://www.behance.net/rudhsy" target="_blank" rel="noopener noreferrer">Behance</a>
+                    <a href="https://www.linkedin.com/in/rudhsy/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://www.instagram.com/rudhsy/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Lock Screen -->
+    <div id="lock-screen" class="lock-screen">
+        <div class="password-panel">
+            <div class="password-overlay"></div>
+            <div class="password-content">
+                <h2 class="password-title">SYSTEM LOCKED</h2>
+                <input type="password" id="password-input" class="password-input" placeholder="ACCESS KEY">
+                <button id="unlock-button" class="unlock-button">AUTHORIZE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Digital Rain ---
+            const canvas = document.getElementById('rain-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン01';
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            for (let x = 0; x < columns; x++) { drops[x] = 1; }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#888'; // Brighter Grey color for the rain
+                ctx.font = fontSize + 'px monospace';
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, 40);
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                const newColumns = canvas.width / fontSize;
+                drops.length = 0;
+                for (let x = 0; x < newColumns; x++) { drops[x] = 1; }
+            });
+
+            // --- Animated Cursor ---
+            const cursor = document.querySelector('.animated-cursor');
+            if (cursor) {
+                const hoverElements = document.querySelectorAll('a, button, h1, h2, h3, p, span');
+                const onMouseMove = (e) => {
+                    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+                };
+                const onMouseOver = () => cursor.classList.add('hover');
+                const onMouseOut = () => cursor.classList.remove('hover');
+                document.addEventListener('mousemove', onMouseMove);
+                hoverElements.forEach(el => {
+                    el.addEventListener('mouseover', onMouseOver);
+                    el.addEventListener('mouseout', onMouseOut);
+                });
+            }
+
+            // --- Password Lock ---
+            const lockScreen = document.getElementById('lock-screen');
+            const passwordInput = document.getElementById('password-input');
+            const unlockButton = document.getElementById('unlock-button');
+            const mainContent = document.getElementById('main-content');
+            
+            const correctPassword = 'sarayugay';
+
+            function checkPassword() {
+                if (passwordInput.value === correctPassword) {
+                    lockScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        lockScreen.style.display = 'none';
+                    }, 500);
+                    mainContent.style.visibility = 'visible';
+                } else {
+                    passwordInput.classList.add('shake');
+                    passwordInput.value = '';
+                    setTimeout(() => {
+                        passwordInput.classList.remove('shake');
+                    }, 820);
+                }
+            }
+
+            unlockButton.addEventListener('click', checkPassword);
+            
+            passwordInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
