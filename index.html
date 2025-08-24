@@ -6,17 +6,27 @@
     <title>Anirudh A</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         /* --- CSS Variables --- */
         :root {
-            --accent-color: #6366F1;
-            --font-main: 'Space Grotesk', sans-serif;
-            --bg-color: #000;
-            --text-primary: #EAEAEA;
-            --text-secondary: #A0A0A0;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #4285F4; /* Google Blue */
+            --font-main: 'Inter', sans-serif;
+            --bg-color: #FFFFFF;
+            --bg-secondary-color: #f8f9fa;
+            --text-primary: #202124; /* Google Dark Grey */
+            --text-secondary: #5f6368;
+            --border-color: #dfe1e5;
+            --card-bg: #FFFFFF;
+        }
+        
+        body.dark-theme {
+            --bg-color: #202124;
+            --bg-secondary-color: #292a2d;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --border-color: #3c4043;
+            --card-bg: #292a2d;
         }
 
         /* --- Base & Reset Styles --- */
@@ -33,40 +43,273 @@
             background-color: var(--bg-color);
             color: var(--text-primary);
             overflow-x: hidden;
-            cursor: none;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* --- Animated Cursor --- */
-        .animated-cursor {
-            width: 8px;
-            height: 8px;
-            background-color: white;
-            border-radius: 50%;
-            position: fixed;
-            top: -4px;
-            left: -4px;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.15s ease-out, width 0.3s ease, height 0.3s ease;
-        }
-        .animated-cursor.hover {
-            width: 40px;
-            height: 40px;
-            top: -20px;
-            left: -20px;
+        /* --- Utility Classes --- */
+        .hidden {
+            display: none;
         }
 
-        /* --- Canvas for Digital Rain --- */
-        #rain-canvas {
-            position: fixed;
+        /* --- Portfolio Layout --- */
+        .container {
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        /* --- Header --- */
+        .header {
+            position: sticky;
             top: 0;
-            left: 0;
+            z-index: 50;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        body.dark-theme .header { background-color: rgba(32, 33, 36, 0.9); }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4.5rem;
+        }
+        .header .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .header nav {
+            display: flex;
+            align-items: center;
+        }
+        .header .nav-links {
+             display: none;
+        }
+        @media (min-width: 768px) {
+            .header .nav-links {
+                display: flex;
+                gap: 2.5rem;
+            }
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        .nav-link:hover { color: var(--accent-color); }
+
+        /* --- Theme Switcher --- */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            margin-left: 1.5rem;
+        }
+        .theme-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .theme-button:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text-primary);
+        }
+        body.dark-theme .theme-button:hover {
+             background-color: rgba(255,255,255,0.1);
+        }
+        .theme-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* --- Bento Grid Section --- */
+        .bento-section {
+            padding: 8rem 0;
+        }
+        .bento-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(1, 1fr);
+        }
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(3, minmax(150px, auto));
+            }
+        }
+        .bento-item {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bento-text {
+            grid-column: 1 / -1; /* Full width on mobile */
+            grid-row: 3 / 4;
+            background-color: var(--bg-secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            min-height: 250px;
+        }
+        .bento-text h1 {
+            font-weight: 800;
+            font-size: 4rem;
+            line-height: 1;
+        }
+        @media (min-width: 768px) {
+            .bento-text {
+                grid-column: 2 / 4;
+                grid-row: 2 / 3;
+            }
+             .bento-text h1 {
+                font-size: 6rem;
+            }
+        }
+        .project-card {
+            display: block;
+            text-decoration: none;
+            color: var(--text-primary);
+            height: 100%;
+        }
+        .project-card img {
             width: 100%;
             height: 100%;
-            z-index: -1;
-            filter: blur(2px); /* Added blur to the background canvas */
+            object-fit: cover;
+            transition: transform 0.4s ease-out;
         }
+        .project-card:hover img {
+            transform: scale(1.05);
+        }
+        .project-card .card-info { 
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem; 
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: white;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.4s ease-out;
+        }
+        .project-card:hover .card-info {
+            opacity: 1; /* Shown on hover */
+        }
+        .project-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .project-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .project-card .tag {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #f1f3f4;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        /* Specific grid placements for desktop */
+        @media (min-width: 768px) {
+            .p1 { grid-column: 1 / 3; grid-row: 1 / 2; }
+            .p2 { grid-column: 3 / 5; grid-row: 1 / 2; }
+            .p3 { grid-column: 1 / 2; grid-row: 2 / 4; }
+            .p4 { grid-column: 4 / 5; grid-row: 2 / 4; }
+            .p5 { grid-column: 2 / 3; grid-row: 3 / 4; }
+            .p6 { grid-column: 3 / 4; grid-row: 3 / 4; }
+        }
+
+        /* --- About Section --- */
+        .about {
+            padding: 8rem 0;
+            background-color: var(--bg-secondary-color);
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 4rem;
+        }
+        .about-grid {
+            display: grid;
+            gap: 4rem;
+            align-items: center;
+        }
+        @media (min-width: 768px) { .about-grid { grid-template-columns: repeat(5, 1fr); } }
+        .about-image {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) { .about-image { grid-column: span 2 / span 2; } }
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @media (min-width: 768px) { .about-content { grid-column: span 3 / span 3; } }
+        .about-content h2 { margin-bottom: 2rem; }
+        .about-content p {
+            max-width: 42rem;
+            font-size: 1.125rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+        .about-content p strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            padding: 5rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .footer h2 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+        .footer .email-link {
+            display: inline-block;
+            font-size: 1.25rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-bottom: 3rem;
+            font-weight: 500;
+        }
+        .footer .email-link:hover { text-decoration: underline; }
+        .footer .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .footer .social-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .footer .social-links a:hover { color: var(--text-primary); }
 
         /* --- Lock Screen Styles --- */
         .lock-screen {
@@ -89,9 +332,9 @@
             position: relative;
             overflow: hidden;
             width: 100%;
-            max-width: 24rem; /* max-w-sm */
+            max-width: 24rem;
             height: 500px;
-            border-radius: 0.5rem; /* rounded-lg */
+            border-radius: 0.5rem;
             text-align: center;
         }
         .password-overlay {
@@ -140,6 +383,7 @@
             font-weight: 700;
             letter-spacing: 0.1em;
             border: none;
+            cursor: pointer;
         }
         .shake {
             animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
@@ -151,297 +395,98 @@
           40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
-        /* --- Portfolio Layout --- */
-        .container {
-            max-width: 1120px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        @media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
-        @media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; } }
-
-        /* --- Header --- */
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-        }
-        .header .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 6rem;
-        }
-        .header .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.025em;
-        }
-        .header nav {
-            display: none;
-        }
-        @media (min-width: 768px) {
-            .header nav {
-                display: flex;
-                gap: 3rem;
-            }
-        }
-        .nav-link {
-            position: relative;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        .nav-link:hover { color: white; }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            transform: scaleX(0);
-            height: 1px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--accent-color);
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
-        }
-        .nav-link:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-
-        /* --- Hero Section --- */
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-top: 7rem;
-            padding-bottom: 7rem;
-        }
-        .hero h1 {
-            font-weight: 700;
-            font-size: 3rem;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-        }
-        .hero p {
-            max-width: 56rem;
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-        }
-        @media (min-width: 640px) { .hero h1 { font-size: 3.75rem; } .hero p { font-size: 1.25rem; } }
-        @media (min-width: 1024px) { .hero h1 { font-size: 4.5rem; } }
-
-        /* --- Projects Section (Google AI Experiments Style) --- */
-        .projects {
-            padding-top: 6rem;
-            padding-bottom: 6rem;
-        }
-        .section-title {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 4rem;
-        }
-        .project-grid {
-            display: grid;
-            gap: 2.5rem;
-        }
-        @media (min-width: 768px) {
-            .project-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        .project-card {
-            display: block;
-            text-decoration: none;
-        }
-        .project-card .card-content {
-            background-color: var(--card-bg);
-            border-radius: 0.75rem; /* Slightly more rounded */
-            overflow: hidden;
-            border: 1px solid transparent; /* No border by default */
-            transition: all 0.3s ease-out;
-            transform: translateY(0);
-        }
-        .project-card:hover .card-content {
-            border-color: var(--accent-color);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2), 0 0 20px rgba(99, 102, 241, 0.15);
-        }
-        .project-card img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-        }
-        .project-card .card-info { padding: 1.5rem; }
-        .project-card h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 0.75rem;
-        }
-        .project-card .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        .project-card .tag {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-        }
-
-        /* --- About Section --- */
-        .about {
-            padding-top: 6rem;
-            padding-bottom: 6rem;
-        }
-        .about-grid {
-            display: grid;
-            gap: 4rem;
-            align-items: center;
-        }
-        @media (min-width: 768px) { .about-grid { grid-template-columns: repeat(5, 1fr); } }
-        .about-image {
-            border-radius: 0.5rem;
-            overflow: hidden;
-        }
-        @media (min-width: 768px) { .about-image { grid-column: span 2 / span 2; } }
-        .about-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        @media (min-width: 768px) { .about-content { grid-column: span 3 / span 3; } }
-        .about-content h2 { margin-bottom: 2rem; }
-        .about-content p {
-            max-width: 42rem;
-            font-size: 1.125rem;
-            line-height: 1.75;
-            color: var(--text-secondary);
-        }
-        .about-content p strong {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* --- Footer --- */
-        .footer {
-            padding-top: 6rem;
-            padding-bottom: 6rem;
-            margin-top: 4rem;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
-        .footer h2 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
-        @media (min-width: 640px) { .footer h2 { font-size: 3rem; } }
-        .footer .email-link {
-            display: inline-block;
-            font-size: 1.25rem;
-            color: var(--accent-color);
-            text-decoration: none;
-            margin-bottom: 3rem;
-        }
-        .footer .email-link:hover { text-decoration: underline; }
-        .footer .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-        }
-        .footer .social-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        .footer .social-links a:hover { color: white; }
     </style>
 </head>
 <body>
-    <div class="animated-cursor"></div>
-    <canvas id="rain-canvas"></canvas>
-    
-    <!-- Main Content - Hidden by default -->
     <div id="main-content" style="visibility: hidden;">
         <header class="header">
             <div class="container">
                 <div class="logo">Anirudh A</div>
                 <nav>
-                    <a href="#projects" class="nav-link">Projects</a>
-                    <a href="#about" class="nav-link">About</a>
-                    <a href="#contact" class="nav-link">Contact</a>
+                    <div class="nav-links">
+                        <a href="#about" class="nav-link">About</a>
+                        <a href="#contact" class="nav-link">Contact</a>
+                    </div>
+                    <div class="theme-switcher">
+                        <button class="theme-button" id="theme-toggle">
+                            <svg id="theme-icon-light" class="" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <svg id="theme-icon-dark" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        </button>
+                    </div>
                 </nav>
             </div>
         </header>
 
-        <main class="container">
-            <section class="hero">
-                <h1>Designing intuitive and meaningful digital experiences.</h1>
-                <p>I'm an Interaction Designer passionate about bridging the gap between people and technology through thoughtful user research, prototyping, and design.</p>
-            </section>
-
-            <section id="projects" class="projects">
-                <h2 class="section-title">Featured Work</h2>
-                <div class="project-grid">
-                    <a href="https://www.behance.net/rudhsy" target="_blank" rel="noopener noreferrer" class="project-card">
-                        <div class="card-content">
-                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+One&font=roboto" alt="Mobile Banking App Redesign">
-                            <div class="card-info">
-                                <h3>Mobile Banking App Redesign</h3>
-                                <div class="tags">
-                                    <span class="tag">Figma</span>
-                                    <span class="tag">User Research</span>
-                                    <span class="tag">Prototyping</span>
-                                </div>
-                            </div>
+        <main>
+            <section class="bento-section">
+                <div class="container">
+                    <div class="bento-grid">
+                        <div class="bento-item bento-text">
+                            <h1>I Design</h1>
                         </div>
-                    </a>
-                    <a href="#" class="project-card">
-                        <div class="card-content">
-                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+Two&font=roboto" alt="E-commerce User Journey">
+                        <a href="#" class="bento-item project-card p1">
+                            <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="Project One">
                             <div class="card-info">
-                                <h3>E-commerce User Journey</h3>
-                                <div class="tags">
-                                    <span class="tag">Adobe XD</span>
-                                    <span class="tag">Journey Mapping</span>
-                                    <span class="tag">A/B Testing</span>
-                                </div>
+                                <h3>Mobile Banking App</h3>
+                                <div class="tags"><span class="tag">Figma</span><span class="tag">User Research</span></div>
                             </div>
-                        </div>
-                    </a>
-                    <a href="#" class="project-card">
-                        <div class="card-content">
-                            <img src="https://placehold.co/600x400/0A0A0A/6366F1?text=Project+Three&font=roboto" alt="Design System for a SaaS Platform">
+                        </a>
+                        <a href="#" class="bento-item project-card p2">
+                            <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="Project Two">
                             <div class="card-info">
-                                <h3>Design System for a SaaS Platform</h3>
-                                <div class="tags">
-                                    <span class="tag">Component Design</span>
-                                    <span class="tag">Style Guides</span>
-                                    <span class="tag">Collaboration</span>
-                                </div>
+                                <h3>E-commerce Journey</h3>
+                                <div class="tags"><span class="tag">Adobe XD</span></div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                        <a href="#" class="bento-item project-card p3">
+                            <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="Project Three">
+                            <div class="card-info">
+                                <h3>SaaS Design System</h3>
+                                <div class="tags"><span class="tag">Component Design</span></div>
+                            </div>
+                        </a>
+                        <a href="#" class="bento-item project-card p4">
+                            <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="UX Case Study">
+                            <div class="card-info">
+                                <h3>UX Case Study</h3>
+                                <div class="tags"><span class="tag">UX Research</span></div>
+                            </div>
+                        </a>
+                        <a href="#" class="bento-item project-card p5">
+                            <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="Interactive Prototype">
+                            <div class="card-info">
+                                <h3>Interactive Prototype</h3>
+                                <div class="tags"><span class="tag">Protopie</span></div>
+                            </div>
+                        </a>
+                        <a href="#" class="bento-item project-card p6">
+                            <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="Branding Project">
+                            <div class="card-info">
+                                <h3>Branding Project</h3>
+                                <div class="tags"><span class="tag">Illustrator</span></div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </section>
 
             <section id="about" class="about">
-                <div class="about-grid">
-                    <div class="about-image">
-                        <img src="https://placehold.co/500x600/111111/EAEAEA?text=Anirudh+A" alt="Anirudh A">
-                    </div>
-                    <div class="about-content">
-                        <h2 class="section-title">About Me</h2>
-                        <p>I believe that the best designs are born from a deep <strong>understanding of human behavior and needs.</strong> My process is rooted in empathy, iterative prototyping, and a relentless pursuit of clarity. I aim to create products that are not only functional and beautiful, but also <strong>respectful of a user's time and attention.</strong></p>
+                <div class="container">
+                    <div class="about-grid">
+                        <div class="about-image">
+                             <!-- PASTE YOUR IMAGE URL HERE -->
+                            <img src="lockpic.jpg" alt="Anirudh A">
+                        </div>
+                        <div class="about-content">
+                            <h2 class="section-title">About Me</h2>
+                            <p>I believe that the best designs are born from a deep <strong>understanding of human behavior and needs.</strong> My process is rooted in empathy, iterative prototyping, and a relentless pursuit of clarity. I aim to create products that are not only functional and beautiful, but also <strong>respectful of a user's time and attention.</strong></p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -474,55 +519,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Digital Rain ---
-            const canvas = document.getElementById('rain-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン01';
-            const fontSize = 16;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-            for (let x = 0; x < columns; x++) { drops[x] = 1; }
+            const themeToggleButton = document.getElementById('theme-toggle');
+            const lightIcon = document.getElementById('theme-icon-light');
+            const darkIcon = document.getElementById('theme-icon-dark');
+            const body = document.body;
 
-            function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#888'; // Brighter Grey color for the rain
-                ctx.font = fontSize + 'px monospace';
-                for (let i = 0; i < drops.length; i++) {
-                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-            setInterval(draw, 40);
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                const newColumns = canvas.width / fontSize;
-                drops.length = 0;
-                for (let x = 0; x < newColumns; x++) { drops[x] = 1; }
+            themeToggleButton.addEventListener('click', () => {
+                body.classList.toggle('dark-theme');
+                lightIcon.classList.toggle('hidden');
+                darkIcon.classList.toggle('hidden');
             });
-
-            // --- Animated Cursor ---
-            const cursor = document.querySelector('.animated-cursor');
-            if (cursor) {
-                const hoverElements = document.querySelectorAll('a, button, h1, h2, h3, p, span');
-                const onMouseMove = (e) => {
-                    cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-                };
-                const onMouseOver = () => cursor.classList.add('hover');
-                const onMouseOut = () => cursor.classList.remove('hover');
-                document.addEventListener('mousemove', onMouseMove);
-                hoverElements.forEach(el => {
-                    el.addEventListener('mouseover', onMouseOver);
-                    el.addEventListener('mouseout', onMouseOut);
-                });
-            }
 
             // --- Password Lock ---
             const lockScreen = document.getElementById('lock-screen');
