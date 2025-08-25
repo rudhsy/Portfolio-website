@@ -175,6 +175,7 @@
             justify-content: center;
             padding: 2rem;
             min-height: 200px;
+            background-color: transparent; /* Changed */
         }
         .bento-text h1 {
             font-weight: 800;
@@ -368,19 +369,12 @@
             align-items: center;
             justify-content: center;
             transition: opacity 0.5s ease-out;
-        }
-        .lock-screen-backdrop {
-            position: absolute;
-            inset: 0;
             background-color: var(--bg-color);
-            opacity: 0.8;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
         .password-panel {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background-image: url('lockpic.jpg');
+            background-size: cover;
+            background-position: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             position: relative;
@@ -390,25 +384,31 @@
             height: 500px;
             border-radius: 1rem;
             text-align: center;
+        }
+        .password-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 50%, transparent);
+        }
+        .password-content {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 2rem;
-        }
-        body.dark-theme .password-panel {
-             background-color: rgba(41, 42, 45, 0.5);
-             border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
         }
         .password-title {
             font-size: 1.25rem;
-            color: var(--text-secondary);
+            color: #e8eaed;
             margin-bottom: 1rem;
             letter-spacing: 0.1em;
         }
         .password-input {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--text-secondary);
-            color: var(--text-primary);
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #9aa0a6;
+            color: #e8eaed;
             font-family: var(--font-main);
             width: 100%;
             padding: 0.75rem;
@@ -552,11 +552,13 @@
 
     <!-- Lock Screen -->
     <div id="lock-screen" class="lock-screen">
-        <div class="lock-screen-backdrop"></div>
         <div class="password-panel">
-            <h2 class="password-title">SYSTEM LOCKED</h2>
-            <input type="password" id="password-input" class="password-input" placeholder="ACCESS KEY">
-            <button id="unlock-button" class="unlock-button">AUTHORIZE</button>
+            <div class="password-overlay"></div>
+            <div class="password-content">
+                <h2 class="password-title">SYSTEM LOCKED</h2>
+                <input type="password" id="password-input" class="password-input" placeholder="ACCESS KEY">
+                <button id="unlock-button" class="unlock-button">AUTHORIZE</button>
+            </div>
         </div>
     </div>
 
