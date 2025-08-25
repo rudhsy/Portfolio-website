@@ -46,6 +46,9 @@
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s, color 0.3s;
         }
+        body.overlay-open {
+            overflow: hidden;
+        }
 
         /* --- Utility Classes --- */
         .hidden {
@@ -54,11 +57,11 @@
 
         /* --- Portfolio Layout --- */
         .container {
-            max-width: 1120px;
+            max-width: 1280px; /* Wider container for bento */
             margin-left: auto;
             margin-right: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
 
         /* --- Header --- */
@@ -66,13 +69,14 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
             transition: background-color 0.3s, border-color 0.3s;
         }
         
-        body.dark-theme .header { background-color: rgba(32, 33, 36, 0.9); }
+        body.dark-theme .header { background-color: rgba(32, 33, 36, 0.8); }
 
         .header .container {
             display: flex;
@@ -102,6 +106,7 @@
             text-decoration: none;
             transition: color 0.3s;
             font-weight: 500;
+            cursor: pointer;
         }
         .nav-link:hover { color: var(--accent-color); }
 
@@ -137,39 +142,47 @@
 
         /* --- Bento Grid Section --- */
         .bento-section {
-            padding: 8rem 0;
+            padding: 2rem 0;
+            min-height: calc(100vh - 4.5rem);
+            display: flex;
+            align-items: center;
         }
         .bento-grid {
             display: grid;
             gap: 1rem;
-            grid-template-columns: repeat(1, 1fr);
+            width: 100%;
+            grid-template-columns: 1fr; /* Mobile first: single column */
         }
+
         @media (min-width: 768px) {
             .bento-grid {
                 grid-template-columns: repeat(4, 1fr);
-                grid-template-rows: repeat(3, minmax(150px, auto));
+                grid-template-rows: repeat(3, 1fr);
+                height: 70vh;
             }
         }
+        
         .bento-item {
             border-radius: 12px;
             overflow: hidden;
             position: relative;
-        }
-        .bento-text {
-            grid-column: 1 / -1; /* Full width on mobile */
-            grid-row: 3 / 4;
             background-color: var(--bg-secondary-color);
+        }
+        
+        .bento-text {
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            min-height: 250px;
+            min-height: 200px;
         }
         .bento-text h1 {
             font-weight: 800;
             font-size: 4rem;
             line-height: 1;
+            text-align: center;
         }
+        
         @media (min-width: 768px) {
             .bento-text {
                 grid-column: 2 / 4;
@@ -179,11 +192,13 @@
                 font-size: 6rem;
             }
         }
+
         .project-card {
             display: block;
             text-decoration: none;
             color: var(--text-primary);
             height: 100%;
+            min-height: 250px;
         }
         .project-card img {
             width: 100%;
@@ -204,11 +219,11 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             color: white;
-            opacity: 0; /* Hidden by default */
+            opacity: 0;
             transition: opacity 0.4s ease-out;
         }
         .project-card:hover .card-info {
-            opacity: 1; /* Shown on hover */
+            opacity: 1;
         }
         .project-card h3 {
             font-size: 1.25rem;
@@ -228,6 +243,7 @@
             border-radius: 9999px;
             font-weight: 500;
         }
+        
         /* Specific grid placements for desktop */
         @media (min-width: 768px) {
             .p1 { grid-column: 1 / 3; grid-row: 1 / 2; }
@@ -238,10 +254,24 @@
             .p6 { grid-column: 3 / 4; grid-row: 3 / 4; }
         }
 
-        /* --- About Section --- */
-        .about {
-            padding: 8rem 0;
-            background-color: var(--bg-secondary-color);
+        /* --- About Section Overlay --- */
+        .about-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+            overflow-y: auto;
+        }
+        .about-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .about-overlay .container {
+            padding-top: 8rem;
+            padding-bottom: 8rem;
         }
         .section-title {
             font-size: 2.5rem;
@@ -276,6 +306,24 @@
             color: var(--text-primary);
             font-weight: 500;
         }
+        .close-about-button {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .close-about-button:hover {
+            color: var(--text-primary);
+        }
+        .close-about-button svg {
+            width: 32px;
+            height: 32px;
+        }
+
 
         /* --- Footer --- */
         .footer {
@@ -315,41 +363,41 @@
         .lock-screen {
             position: fixed;
             inset: 0;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 100;
+            z-index: 200;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: opacity 0.5s ease-out;
         }
+        .lock-screen-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: var(--bg-color);
+            opacity: 0.8;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
         .password-panel {
-            background-image: url('lockpic.jpg');
-            background-size: cover;
-            background-position: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             position: relative;
             overflow: hidden;
             width: 100%;
             max-width: 24rem;
             height: 500px;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             text-align: center;
-        }
-        .password-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 50%, transparent);
-        }
-        .password-content {
-            position: relative;
-            z-index: 10;
-            padding: 2rem;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            height: 100%;
+            padding: 2rem;
+        }
+        body.dark-theme .password-panel {
+             background-color: rgba(41, 42, 45, 0.5);
+             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .password-title {
             font-size: 1.25rem;
@@ -358,13 +406,13 @@
             letter-spacing: 0.1em;
         }
         .password-input {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.2);
             border: 1px solid var(--text-secondary);
             color: var(--text-primary);
             font-family: var(--font-main);
             width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             text-align: center;
             margin-bottom: 1rem;
         }
@@ -378,8 +426,8 @@
             color: white;
             font-family: var(--font-main);
             width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             font-weight: 700;
             letter-spacing: 0.1em;
             border: none;
@@ -404,7 +452,7 @@
                 <div class="logo">Anirudh A</div>
                 <nav>
                     <div class="nav-links">
-                        <a href="#about" class="nav-link">About</a>
+                        <a href="#" id="open-about-overlay" class="nav-link">About</a>
                         <a href="#contact" class="nav-link">Contact</a>
                     </div>
                     <div class="theme-switcher">
@@ -425,7 +473,6 @@
                             <h1>I Design</h1>
                         </div>
                         <a href="#" class="bento-item project-card p1">
-                            <!-- PASTE YOUR IMAGE URL HERE -->
                             <img src="lockpic.jpg" alt="Project One">
                             <div class="card-info">
                                 <h3>Mobile Banking App</h3>
@@ -433,7 +480,6 @@
                             </div>
                         </a>
                         <a href="#" class="bento-item project-card p2">
-                            <!-- PASTE YOUR IMAGE URL HERE -->
                             <img src="lockpic.jpg" alt="Project Two">
                             <div class="card-info">
                                 <h3>E-commerce Journey</h3>
@@ -441,7 +487,6 @@
                             </div>
                         </a>
                         <a href="#" class="bento-item project-card p3">
-                            <!-- PASTE YOUR IMAGE URL HERE -->
                             <img src="lockpic.jpg" alt="Project Three">
                             <div class="card-info">
                                 <h3>SaaS Design System</h3>
@@ -449,15 +494,13 @@
                             </div>
                         </a>
                         <a href="#" class="bento-item project-card p4">
-                            <!-- PASTE YOUR IMAGE URL HERE -->
-                            <img src="lockpic.jpg" alt="UX Case Study">
+                           <img src="lockpic.jpg" alt="UX Case Study">
                             <div class="card-info">
                                 <h3>UX Case Study</h3>
                                 <div class="tags"><span class="tag">UX Research</span></div>
                             </div>
                         </a>
                         <a href="#" class="bento-item project-card p5">
-                            <!-- PASTE YOUR IMAGE URL HERE -->
                             <img src="lockpic.jpg" alt="Interactive Prototype">
                             <div class="card-info">
                                 <h3>Interactive Prototype</h3>
@@ -465,28 +508,12 @@
                             </div>
                         </a>
                         <a href="#" class="bento-item project-card p6">
-                            <!-- PASTE YOUR IMAGE URL HERE -->
                             <img src="lockpic.jpg" alt="Branding Project">
                             <div class="card-info">
                                 <h3>Branding Project</h3>
                                 <div class="tags"><span class="tag">Illustrator</span></div>
                             </div>
                         </a>
-                    </div>
-                </div>
-            </section>
-
-            <section id="about" class="about">
-                <div class="container">
-                    <div class="about-grid">
-                        <div class="about-image">
-                             <!-- PASTE YOUR IMAGE URL HERE -->
-                            <img src="lockpic.jpg" alt="Anirudh A">
-                        </div>
-                        <div class="about-content">
-                            <h2 class="section-title">About Me</h2>
-                            <p>I believe that the best designs are born from a deep <strong>understanding of human behavior and needs.</strong> My process is rooted in empathy, iterative prototyping, and a relentless pursuit of clarity. I aim to create products that are not only functional and beautiful, but also <strong>respectful of a user's time and attention.</strong></p>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -505,15 +532,31 @@
         </footer>
     </div>
 
+    <!-- About Overlay -->
+    <div id="about-overlay" class="about-overlay">
+        <button id="close-about-overlay" class="close-about-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="lockpic.jpg" alt="Anirudh A">
+                </div>
+                <div class="about-content">
+                    <h2 class="section-title">About Me</h2>
+                    <p>I believe that the best designs are born from a deep <strong>understanding of human behavior and needs.</strong> My process is rooted in empathy, iterative prototyping, and a relentless pursuit of clarity. I aim to create products that are not only functional and beautiful, but also <strong>respectful of a user's time and attention.</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Lock Screen -->
     <div id="lock-screen" class="lock-screen">
+        <div class="lock-screen-backdrop"></div>
         <div class="password-panel">
-            <div class="password-overlay"></div>
-            <div class="password-content">
-                <h2 class="password-title">SYSTEM LOCKED</h2>
-                <input type="password" id="password-input" class="password-input" placeholder="ACCESS KEY">
-                <button id="unlock-button" class="unlock-button">AUTHORIZE</button>
-            </div>
+            <h2 class="password-title">SYSTEM LOCKED</h2>
+            <input type="password" id="password-input" class="password-input" placeholder="ACCESS KEY">
+            <button id="unlock-button" class="unlock-button">AUTHORIZE</button>
         </div>
     </div>
 
@@ -560,6 +603,22 @@
                 if (event.key === 'Enter') {
                     checkPassword();
                 }
+            });
+
+            // --- About Overlay ---
+            const openAboutButton = document.getElementById('open-about-overlay');
+            const closeAboutButton = document.getElementById('close-about-overlay');
+            const aboutOverlay = document.getElementById('about-overlay');
+
+            openAboutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                aboutOverlay.classList.add('visible');
+                body.classList.add('overlay-open');
+            });
+
+            closeAboutButton.addEventListener('click', () => {
+                aboutOverlay.classList.remove('visible');
+                body.classList.remove('overlay-open');
             });
         });
     </script>
